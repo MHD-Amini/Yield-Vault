@@ -163,6 +163,7 @@ contract CrossChainBridge is Ownable, ReentrancyGuard, ILayerZeroReceiver {
         require(supportedTokens[asset], "Token not supported");
         require(peers[dstChainId].active, "Destination chain not configured");
         require(amount > 0, "Amount must be greater than 0");
+        require(recipient != bytes32(0), "Invalid recipient");
 
         // Transfer tokens from sender
         IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);

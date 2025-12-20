@@ -4,13 +4,10 @@ import {
   Wallet,
   TrendingUp,
   ArrowUpRight,
-  ArrowDownRight,
   RefreshCw,
   Plus,
   Minus,
   ExternalLink,
-  Copy,
-  Check,
   AlertCircle,
   ChevronDown
 } from 'lucide-react';
@@ -24,7 +21,6 @@ const Portfolio: React.FC = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
   const [selectedPosition, setSelectedPosition] = useState<typeof positions[0] | null>(null);
-  const [copiedAddress, setCopiedAddress] = useState(false);
 
   // Calculate totals
   const totalValue = positions.reduce((sum, p) => sum + p.currentValue, 0);
@@ -52,9 +48,7 @@ const Portfolio: React.FC = () => {
 
   const copyAddress = (address: string) => {
     navigator.clipboard.writeText(address);
-    setCopiedAddress(true);
     toast.success('Address copied!');
-    setTimeout(() => setCopiedAddress(false), 2000);
   };
 
   const handleDeposit = () => {

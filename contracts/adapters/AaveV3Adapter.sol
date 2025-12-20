@@ -83,11 +83,7 @@ contract AaveV3Adapter is IYieldProtocol, Ownable, ReentrancyGuard {
         
         // Aave V3 getReserveData returns a struct, we only need currentLiquidityRate
         // which is at index 2 (after configuration and liquidityIndex)
-        (uint256 configuration, uint128 liquidityIndex, uint128 currentLiquidityRate, , , , , , , , , , , , ) = aavePool.getReserveData(asset);
-        
-        // Silence unused variable warnings
-        configuration;
-        liquidityIndex;
+        (, , uint128 currentLiquidityRate, , , , , , , , , , , , ) = aavePool.getReserveData(asset);
         
         // Aave returns rate in RAY (27 decimals), convert to basis points
         // APY = (1 + rate/secondsPerYear)^secondsPerYear - 1
