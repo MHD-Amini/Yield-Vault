@@ -1,0 +1,196 @@
+# Schema for Cross-Chain Yield Aggregator Subgraph
+
+"""
+Protocol represents a yield-generating protocol (Aave, Compound, etc.)
+"""
+type Protocol @entity {
+  id: ID! # Protocol ID (keccak256 hash)
+  adapter: Bytes! # Adapter contract address
+  name: String! # Protocol name
+  chainId: BigInt! # Chain ID where deployed
+  active: Boolean! # Whether protocol is active
+  totalDeposited: BigInt! # Total value deposited
+  currentAPY: BigInt! # Current APY in basis points
+  lastUpdate: BigInt! # Last update timestamp
+  deposits: [Deposit!]! @derivedFrom(field: "protocol")
+  withdrawals: [Withdrawal!]! @derivedFrom(field: "protocol")
+  apyHistory: [APYSnapshot!]! @derivedFrom(field: "protocol")
+}
+
+"""
+User represents a wallet address that interacts with the aggregator
+"""
+type User @entity {
+  id: ID! # User address
+  totalDeposited: BigInt! # Total deposited across all assets
+  totalWithdrawn: BigInt! # Total withdrawn
+  totalYieldEarned: BigInt! # Total yield earned
+  positions: [UserPosition!]! @derivedFrom(field: "user")
+  deposits: [Deposit!]! @derivedFrom(field: "user")
+  withdrawals: [Withdrawal!]! @derivedFrom(field: "user")
+  rebalances: [Rebalance!]! @derivedFrom(field: "user")
+  bridgeRequests: [BridgeRequest!]! @derivedFrom(field: "user")
+}
+
+"""
+Asset represents a supported token (USDC, USDT, etc.)
+"""
+type Asset @entity {
+  id: ID! # Asset address
+  symbol: String! # Token symbol
+  decimals: Int! # Token decimals
+  totalDeposited: BigInt! # Total deposited for this asset
+  supported: Boolean! # Whether asset is supported
+  positions: [UserPosition!]! @derivedFrom(field: "asset")
+}
+
+"""
+UserPosition represents a user's position in a specific asset
+"""
+type UserPosition @entity {
+  id: ID! # user-asset
+  user: User!
+  asset: Asset!
+  deposited: BigInt! # Amount deposited
+  shares: BigInt! # Shares in protocol
+  currentProtocol: Protocol
+  depositTimestamp: BigInt! # When position was created
+  lastUpdate: BigInt! # Last update timestamp
+  currentValue: BigInt! # Current value (with yield)
+  unrealizedYield: BigInt! # Unrealized yield
+}
+
+"""
+Deposit event
+"""
+type Deposit @entity {
+  id: ID! # tx hash - log index
+  user: User!
+  asset: Asset!
+  protocol: Protocol!
+  amount: BigInt!
+  shares: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+"""
+Withdrawal event
+"""
+type Withdrawal @entity {
+  id: ID! # tx hash - log index
+  user: User!
+  asset: Asset!
+  protocol: Protocol!
+  amount: BigInt!
+  yieldEarned: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+"""
+Rebalance event
+"""
+type Rebalance @entity {
+  id: ID! # tx hash - log index
+  user: User
+  asset: Asset!
+  fromProtocol: Protocol!
+  toProtocol: Protocol!
+  amount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+"""
+Cross-chain bridge request
+"""
+type BridgeRequest @entity {
+  id: ID! # Request ID
+  user: User!
+  asset: Asset!
+  amount: BigInt!
+  sourceChainId: BigInt!
+  destinationChainId: BigInt!
+  recipient: Bytes!
+  timestamp: BigInt!
+  completed: Boolean!
+  completedTimestamp: BigInt
+  transactionHash: Bytes!
+}
+
+"""
+APY snapshot for historical tracking
+"""
+type APYSnapshot @entity {
+  id: ID! # protocol-timestamp
+  protocol: Protocol!
+  apy: BigInt! # APY in basis points
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}
+
+"""
+Daily aggregated statistics
+"""
+type DailyStats @entity {
+  id: ID! # date string YYYY-MM-DD
+  date: BigInt! # Unix timestamp
+  totalDeposits: BigInt!
+  totalWithdrawals: BigInt!
+  totalYieldGenerated: BigInt!
+  totalBridgeVolume: BigInt!
+  uniqueUsers: BigInt!
+  depositCount: Int!
+  withdrawalCount: Int!
+  rebalanceCount: Int!
+}
+
+"""
+Global protocol statistics
+"""
+type GlobalStats @entity {
+  id: ID! # "global"
+  totalValueLocked: BigInt!
+  totalDeposits: BigInt!
+  totalWithdrawals: BigInt!
+  totalYieldGenerated: BigInt!
+  totalBridgeVolume: BigInt!
+  totalUsers: BigInt!
+  activeProtocols: Int!
+  supportedChains: Int!
+  lastUpdate: BigInt!
+}
+
+"""
+Chain-specific statistics
+"""
+type ChainStats @entity {
+  id: ID! # Chain ID
+  chainId: BigInt!
+  name: String!
+  totalValueLocked: BigInt!
+  activeProtocols: Int!
+  totalUsers: BigInt!
+  lastUpdate: BigInt!
+}
+
+"""
+Cross-chain message tracking
+"""
+type CrossChainMessage @entity {
+  id: ID! # Message GUID
+  sourceChainId: BigInt!
+  destinationChainId: BigInt!
+  messageType: Int! # 1: Transfer, 2: Rebalance, 3: YieldReport
+  sender: Bytes!
+  asset: Asset
+  amount: BigInt
+  data: Bytes
+  timestamp: BigInt!
+  processed: Boolean!
+  transactionHash: Bytes!
+}

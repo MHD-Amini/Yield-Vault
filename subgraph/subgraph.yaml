@@ -1,0 +1,95 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  # Ethereum Mainnet YieldAggregator
+  - kind: ethereum
+    name: YieldAggregator
+    network: mainnet
+    source:
+      address: "0x0000000000000000000000000000000000000000" # Replace with deployed address
+      abi: YieldAggregator
+      startBlock: 18000000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Protocol
+        - User
+        - Asset
+        - UserPosition
+        - Deposit
+        - Withdrawal
+        - Rebalance
+        - DailyStats
+        - GlobalStats
+      abis:
+        - name: YieldAggregator
+          file: ../artifacts/contracts/YieldAggregator.sol/YieldAggregator.json
+        - name: ERC20
+          file: ../artifacts/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json
+      eventHandlers:
+        - event: ProtocolAdded(indexed bytes32,address,string)
+          handler: handleProtocolAdded
+        - event: ProtocolRemoved(indexed bytes32)
+          handler: handleProtocolRemoved
+        - event: Deposited(indexed address,indexed address,uint256,bytes32)
+          handler: handleDeposited
+        - event: Withdrawn(indexed address,indexed address,uint256,uint256)
+          handler: handleWithdrawn
+        - event: Rebalanced(indexed address,bytes32,bytes32,uint256)
+          handler: handleRebalanced
+        - event: StrategyUpdated(indexed address,bool,uint256)
+          handler: handleStrategyUpdated
+      file: ./src/yield-aggregator.ts
+
+  # Cross-Chain Bridge
+  - kind: ethereum
+    name: CrossChainBridge
+    network: mainnet
+    source:
+      address: "0x0000000000000000000000000000000000000000" # Replace with deployed address
+      abi: CrossChainBridge
+      startBlock: 18000000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BridgeRequest
+        - CrossChainMessage
+        - ChainStats
+      abis:
+        - name: CrossChainBridge
+          file: ../artifacts/contracts/bridge/CrossChainBridge.sol/CrossChainBridge.json
+      eventHandlers:
+        - event: BridgeInitiated(indexed bytes32,indexed address,address,uint256,uint32)
+          handler: handleBridgeInitiated
+        - event: BridgeCompleted(indexed bytes32,address,uint256)
+          handler: handleBridgeCompleted
+        - event: CrossChainMessageReceived(indexed uint32,bytes32,uint8,bytes)
+          handler: handleCrossChainMessageReceived
+        - event: RebalanceRequested(indexed uint32,address,uint256,bytes32)
+          handler: handleRebalanceRequested
+      file: ./src/cross-chain-bridge.ts
+
+# Templates for dynamically created data sources
+templates:
+  # Protocol Adapter template
+  - kind: ethereum
+    name: ProtocolAdapter
+    network: mainnet
+    source:
+      abi: IYieldProtocol
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Protocol
+        - APYSnapshot
+      abis:
+        - name: IYieldProtocol
+          file: ../artifacts/contracts/interfaces/IYieldProtocol.sol/IYieldProtocol.json
+      file: ./src/protocol-adapter.ts

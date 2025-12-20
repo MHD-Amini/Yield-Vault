@@ -1,0 +1,128 @@
+{
+  "abi": [
+    {
+      "inputs": [{ "name": "_endpoint", "type": "address" }],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "name": "requestId", "type": "bytes32" },
+        { "indexed": true, "name": "sender", "type": "address" },
+        { "indexed": false, "name": "asset", "type": "address" },
+        { "indexed": false, "name": "amount", "type": "uint256" },
+        { "indexed": false, "name": "dstChainId", "type": "uint32" }
+      ],
+      "name": "BridgeInitiated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "name": "requestId", "type": "bytes32" },
+        { "indexed": false, "name": "recipient", "type": "address" },
+        { "indexed": false, "name": "amount", "type": "uint256" }
+      ],
+      "name": "BridgeCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "name": "srcChainId", "type": "uint32" },
+        { "indexed": false, "name": "sender", "type": "bytes32" },
+        { "indexed": false, "name": "messageType", "type": "uint8" },
+        { "indexed": false, "name": "data", "type": "bytes" }
+      ],
+      "name": "CrossChainMessageReceived",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        { "name": "asset", "type": "address" },
+        { "name": "amount", "type": "uint256" },
+        { "name": "dstChainId", "type": "uint32" },
+        { "name": "recipient", "type": "bytes32" }
+      ],
+      "name": "bridge",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "name": "dstChainId", "type": "uint32" },
+        { "name": "message", "type": "bytes" }
+      ],
+      "name": "quoteFee",
+      "outputs": [{ "name": "fee", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "requestId", "type": "bytes32" }],
+      "name": "getBridgeRequest",
+      "outputs": [
+        {
+          "components": [
+            { "name": "sender", "type": "address" },
+            { "name": "asset", "type": "address" },
+            { "name": "amount", "type": "uint256" },
+            { "name": "dstChainId", "type": "uint32" },
+            { "name": "recipient", "type": "bytes32" },
+            { "name": "timestamp", "type": "uint256" },
+            { "name": "completed", "type": "bool" }
+          ],
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "eid", "type": "uint32" }],
+      "name": "getPeer",
+      "outputs": [
+        {
+          "components": [
+            { "name": "peer", "type": "bytes32" },
+            { "name": "active", "type": "bool" }
+          ],
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "name": "_eid", "type": "uint32" },
+        { "name": "_peer", "type": "bytes32" }
+      ],
+      "name": "setPeer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "name": "token", "type": "address" },
+        { "name": "supported", "type": "bool" }
+      ],
+      "name": "setSupportedToken",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "", "type": "address" }],
+      "name": "supportedTokens",
+      "outputs": [{ "name": "", "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
