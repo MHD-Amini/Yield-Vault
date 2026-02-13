@@ -4,10 +4,6 @@ A sophisticated DeFi application that automatically moves stablecoins (USDC/USDT
 
 ![YieldVault Screenshot](https://via.placeholder.com/800x400?text=YieldVault+Cross-Chain+Yield+Aggregator)
 
-## 🌐 Live Demo
-
-**Production URL**: [https://3000-i2ldpb3pmbjlsa34g4hr3-cbeee0f9.sandbox.novita.ai](https://3000-i2ldpb3pmbjlsa34g4hr3-cbeee0f9.sandbox.novita.ai)
-
 ## ✨ Features
 
 ### Currently Implemented
@@ -92,7 +88,7 @@ webapp/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/yieldvault.git
+git clone https://github.com/MHD-Amini/Yield-Vault.git
 cd yieldvault
 
 # Install dependencies
@@ -105,19 +101,6 @@ npx hardhat compile
 npm run build
 
 # Start development server
-npm run dev
-```
-
-### Running Locally
-
-```bash
-# Start local Hardhat node
-npm run node
-
-# Deploy contracts to local network
-npm run deploy:local
-
-# Run frontend
 npm run dev
 ```
 
@@ -184,46 +167,10 @@ function quoteFee(uint32 dstChainId, bytes memory message) external view returns
 - Input validation and zero address checks
 - Bridge liquidity verification before transfers
 
-## 🔍 Security Audit (2024-12-19)
 
-The following issues were identified and fixed:
-
-### Smart Contracts
-- ✅ Fixed ERC20 approval pattern for USDT compatibility (using `forceApprove`)
-- ✅ Fixed division by zero edge case in CompoundV3Adapter
-- ✅ Added proper balance checks in CrossChainBridge
-- ✅ Fixed `_getTotalShares` to use correct address
-- ✅ Added `setFeeRecipient` function for fee management
-- ✅ Fixed IAaveV3Pool return value destructuring
-
-### Frontend
-- ✅ Fixed typo in DAI contract address
-- ✅ Improved error handling
-
-### Subgraph
-- ✅ Created missing `protocol-adapter.ts` handler
-- ✅ Fixed recipient type conversion in cross-chain bridge handler
-- ✅ Added proper handling for unknown protocol withdrawals
-
-## 🗺 Roadmap / Not Yet Implemented
-
-- [ ] Real wallet connection with RainbowKit
-- [ ] Live smart contract deployment on testnets
-- [ ] Actual LayerZero endpoint integration
-- [ ] The Graph subgraph deployment
-- [ ] Additional protocol adapters (Yearn, Curve, etc.)
-- [ ] Automated rebalancing scheduler
-- [ ] Gas optimization strategies
-- [ ] Mobile responsive improvements
 
 ## 📜 License
 
 MIT License
 
-## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request.
-
----
-
-**Built with ❤️ using React, Solidity, LayerZero, and The Graph**
